@@ -14,6 +14,7 @@
 		A9240C7D1E9EFD4D00376CCE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9240C7C1E9EFD4D00376CCE /* Assets.xcassets */; };
 		A9240C801E9EFD4D00376CCE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A9240C7E1E9EFD4D00376CCE /* LaunchScreen.storyboard */; };
 		A926198A1EACF17E0002D570 /* Meme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A92619891EACF17E0002D570 /* Meme.swift */; };
+		A98AE7E21EB7D27F00754AF7 /* Anton-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A98AE7E11EB7D27F00754AF7 /* Anton-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		A9240C7F1E9EFD4D00376CCE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A9240C811E9EFD4D00376CCE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A92619891EACF17E0002D570 /* Meme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Meme.swift; sourceTree = "<group>"; };
+		A98AE7E11EB7D27F00754AF7 /* Anton-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Anton-Regular.ttf"; path = "Fonts/Anton-Regular.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 			children = (
 				A926198B1EACF74B0002D570 /* MemeView */,
 				A92619881EACF1430002D570 /* Model */,
+				A98AE7E31EB7D28300754AF7 /* Fonts */,
 				A9240C751E9EFD4D00376CCE /* AppDelegate.swift */,
 				A9240C791E9EFD4D00376CCE /* Main.storyboard */,
 				A9240C7C1E9EFD4D00376CCE /* Assets.xcassets */,
@@ -84,6 +87,14 @@
 				A91B84111EA41FB900F9A372 /* MemeTextFieldDelegate.swift */,
 			);
 			name = MemeView;
+			sourceTree = "<group>";
+		};
+		A98AE7E31EB7D28300754AF7 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				A98AE7E11EB7D27F00754AF7 /* Anton-Regular.ttf */,
+			);
+			name = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -145,6 +156,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A98AE7E21EB7D27F00754AF7 /* Anton-Regular.ttf in Resources */,
 				A9240C801E9EFD4D00376CCE /* LaunchScreen.storyboard in Resources */,
 				A9240C7D1E9EFD4D00376CCE /* Assets.xcassets in Resources */,
 				A9240C7B1E9EFD4D00376CCE /* Main.storyboard in Resources */,

@@ -34,8 +34,6 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
         super.viewDidLoad()
         
         initializeDefaults()
-        customizeAppearance()
-
         memeTextFieldDelegate.memeView = self
     }
     
@@ -56,18 +54,24 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
         memeImageView.image = nil
         bottomTextField.text = "BOTTOM"
         
+        customizeAppearance()
         checkSharingAvailability()
         checkCameraAvailability()
     }
     
     func customizeAppearance() {
+        let customFont = UIFont(name: "Anton-Regular", size:40.0)!
+        setFont(customFont)
+    }
+    
+    func setFont(_ font: UIFont) {
         let textFields = [topTextField, bottomTextField]
         
         let memeTextAttributes:[String:Any] = [
             NSStrokeColorAttributeName: UIColor.black,
             NSStrokeWidthAttributeName: -1.0,
             NSForegroundColorAttributeName: UIColor.white,
-            NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!
+            NSFontAttributeName: font
         ]
         
         for textField in textFields {
@@ -97,7 +101,6 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
                 self.save()
             }
         }
-        
         present(activityViewController, animated: true, completion: nil)
     }
     
@@ -120,6 +123,7 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     @IBAction func pickImageFromLibrary(_ sender: UIBarButtonItem) {
         let controller = UIImagePickerController()
+        controller.allowsEditing = true
         controller.delegate = self
         controller.sourceType = .photoLibrary
         present(controller, animated: true, completion: nil)
@@ -127,9 +131,30 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     @IBAction func pickAnImageFromCamera(_ sender: UIBarButtonItem) {
         let controller = UIImagePickerController()
+        controller.allowsEditing = true
         controller.delegate = self
         controller.sourceType = .camera
         present(controller, animated: true, completion: nil)
+    }
+    
+    @IBAction func changeFont(_ sender: UIBarButtonItem) {
+        let alertController = UIAlertController(title: "Choose a font", message: nil, preferredStyle: .actionSheet)
+        let antonFontOption = UIAlertAction(title: "Anton", style: .default) { (UIAlertAction) in
+            let customFont = UIFont(name: "Anton-Regular", size:40.0)!
+            self.setFont(customFont)
+        }
+        alertController.addAction(antonFontOption)
+        
+        let helveticaFontOption = UIAlertAction(title: "Helvetica Neue", style: .default) { (UIAlertAction) in
+            let customFont = UIFont(name: "HelveticaNeue-CondensedBlack", size:40.0)!
+            self.setFont(customFont)
+        }
+        alertController.addAction(helveticaFontOption)
+        
+        let cancelOption = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alertController.addAction(cancelOption)
+        
+        present(alertController, animated: true, completion: nil)
     }
     
     func save() {
