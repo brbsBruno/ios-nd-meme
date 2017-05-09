@@ -122,18 +122,17 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     @IBAction func pickImageFromLibrary(_ sender: UIBarButtonItem) {
-        let controller = UIImagePickerController()
-        controller.allowsEditing = true
-        controller.delegate = self
-        controller.sourceType = .photoLibrary
-        present(controller, animated: true, completion: nil)
+        pickImage(.photoLibrary)
     }
     
     @IBAction func pickAnImageFromCamera(_ sender: UIBarButtonItem) {
+        pickImage(.camera)
+    }
+    
+    func pickImage(_ sourceType: UIImagePickerControllerSourceType) {
         let controller = UIImagePickerController()
-        controller.allowsEditing = true
         controller.delegate = self
-        controller.sourceType = .camera
+        controller.sourceType = sourceType
         present(controller, animated: true, completion: nil)
     }
     
@@ -166,9 +165,9 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     func generateMemedImage() -> UIImage {
-        self.navigationController?.navigationBar.isHidden = true;
-        self.headerToolbar.isHidden = true;
-        self.footerToolbar.isHidden = true;
+        navigationController?.navigationBar.isHidden = true;
+        headerToolbar.isHidden = true;
+        footerToolbar.isHidden = true;
         
         // Render view to an image
         UIGraphicsBeginImageContext(self.view.frame.size)
@@ -176,9 +175,9 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
         let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         
-        self.navigationController?.navigationBar.isHidden = false;
-        self.headerToolbar.isHidden = false;
-        self.footerToolbar.isHidden = false;
+        navigationController?.navigationBar.isHidden = false;
+        headerToolbar.isHidden = false;
+        footerToolbar.isHidden = false;
         
         return memedImage
     }
@@ -203,13 +202,13 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     func keyboardWillShow(_ notification:Notification) {
         if (bottomTextField.isEditing &&
-            self.view.frame.origin.y == 0) {
-            self.view.frame.origin.y -= getKeyboardHeight(notification)
+            view.frame.origin.y == 0) {
+            view.frame.origin.y -= getKeyboardHeight(notification)
         }
     }
     
     func keyboardWillHide(_ notification:Notification) {
-        self.view.frame.origin.y = 0.0
+        view.frame.origin.y = 0.0
     }
     
     func getKeyboardHeight(_ notification:Notification) -> CGFloat {
