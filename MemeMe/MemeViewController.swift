@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MemeViewController.swift
 //  Meme Experiments
 //
 //  Created by Bruno Barbosa on 12/04/17.
@@ -165,9 +165,9 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     func generateMemedImage() -> UIImage {
-        navigationController?.navigationBar.isHidden = true;
-        headerToolbar.isHidden = true;
-        footerToolbar.isHidden = true;
+        navigationController?.navigationBar.isHidden = true
+        headerToolbar.isHidden = true
+        footerToolbar.isHidden = true
         
         // Render view to an image
         UIGraphicsBeginImageContext(self.view.frame.size)
@@ -175,9 +175,9 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
         let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         
-        navigationController?.navigationBar.isHidden = false;
-        headerToolbar.isHidden = false;
-        footerToolbar.isHidden = false;
+        navigationController?.navigationBar.isHidden = false
+        headerToolbar.isHidden = false
+        footerToolbar.isHidden = false
         
         return memedImage
     }
