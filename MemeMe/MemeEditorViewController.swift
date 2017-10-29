@@ -16,8 +16,9 @@ protocol MemeView: class {
     func disableControls(_ disableControls:Bool)
 }
 
-class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, MemeView {
+class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, MemeView {
     
+    @IBOutlet weak var memeView: UIView!
     @IBOutlet weak var topTextField: UITextField!
     @IBOutlet weak var memeImageView: UIImageView!
     @IBOutlet weak var bottomTextField: UITextField!
@@ -27,6 +28,9 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     @IBOutlet weak var footerToolbar: UIToolbar!
     
     let memeTextFieldDelegate = MemeTextFieldDelegate()
+    
+    let defaultTopText = "TOP"
+    let defaultBottomText = "BOTTOM"
     
     // MARK: - UIViewController
     
@@ -50,13 +54,29 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     }
     
     func initializeDefaults() {
-        topTextField.text = "TOP"
+        topTextField.text = defaultTopText
         memeImageView.image = nil
-        bottomTextField.text = "BOTTOM"
+        bottomTextField.text = defaultBottomText
         
         customizeAppearance()
         checkSharingAvailability()
         checkCameraAvailability()
+    }
+    
+    func hasDefaultData() -> Bool {
+        if (topTextField.text != defaultTopText) {
+            return false
+        }
+        
+        if (bottomTextField.text != defaultBottomText) {
+            return false
+        }
+        
+        if (memeImageView.image != nil) {
+            return false
+        }
+        
+        return true
     }
     
     func customizeAppearance() {
@@ -99,26 +119,32 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
             
             if (success) {
                 self.save()
+                self.dismiss(animated: true, completion: nil)
             }
         }
         present(activityViewController, animated: true, completion: nil)
     }
     
     @IBAction func discardAllChanges(_ sender: Any) {
-        let alertController = UIAlertController(title: "Discart All Changes",
-                                                message: " Are you sure you want to discard the changes in the current meme?",
-                                                preferredStyle: .alert)
-        
-        let discardAction = UIAlertAction(title: "Discard", style: .destructive) { (discard) in
-            self.initializeDefaults()
+        if (!hasDefaultData()) {
+            let alertController = UIAlertController(title: "Discart All Changes",
+                                                    message: " Are you sure you want to discard the changes in the current meme?",
+                                                    preferredStyle: .alert)
+            
+            let discardAction = UIAlertAction(title: "Discard", style: .destructive) { (discard) in
+                self.dismiss(animated: true, completion: nil)
+            }
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            
+            alertController.addAction(discardAction)
+            alertController.addAction(cancelAction)
+            
+            present(alertController, animated: true, completion:nil)
+            
+        } else {
+           dismiss(animated: true, completion: nil)
         }
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        
-        alertController.addAction(discardAction)
-        alertController.addAction(cancelAction)
-        
-        present(alertController, animated: true, completion:nil)
     }
     
     @IBAction func pickImageFromLibrary(_ sender: UIBarButtonItem) {
@@ -158,10 +184,13 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     func save() {
         let memedImage = generateMemedImage()
-        let _ = Meme(topText: topTextField.text!,
+        let meme = Meme(topText: topTextField.text!,
                         bottomText: bottomTextField.text!,
                         originalImage: memeImageView.image!,
                         memedImage: memedImage)
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate.memes.append(meme)
     }
     
     func generateMemedImage() -> UIImage {
@@ -170,8 +199,8 @@ class MemeViewController: UIViewController, UIImagePickerControllerDelegate, UIN
         footerToolbar.isHidden = true
         
         // Render view to an image
-        UIGraphicsBeginImageContext(self.view.frame.size)
-        view.drawHierarchy(in: self.view.frame, afterScreenUpdates: true)
+        UIGraphicsBeginImageContext(self.memeView.frame.size)
+        view.drawHierarchy(in: self.memeView.frame, afterScreenUpdates: true)
         let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         
