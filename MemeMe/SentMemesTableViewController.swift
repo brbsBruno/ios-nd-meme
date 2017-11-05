@@ -12,23 +12,54 @@ private let reuseIdentifier = "SentMemesTableViewCell"
 
 class SentMemesTableViewController: UITableViewController {
     
-    var memes: [Meme]!
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    // MARK: - Properties
+    
+    var memes: [Meme] {
+        return (UIApplication.shared.delegate as! AppDelegate).memes
     }
     
+    // MARK: - Life Cicle
+    
     override func viewWillAppear(_ animated: Bool) {
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        memes = appDelegate.memes
+        super.viewWillAppear(animated)
         
+        tabBarController?.tabBar.isHidden = false
         tableView.reloadData()
     }
     
-    // MARK: - UITableViewDataSource
+    // MARK: - Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showTableViewCellDetail" {
+            if let detailViewController = segue.destination as? MemeDetailViewController,
+                let cell = sender as? SentMemesTableViewCell,
+                let indexPath = tableView.indexPath(for: cell) {
+                detailViewController.meme = memes[indexPath.row];
+            }
+        }
+    }
+    
+    // MARK: - TableView Data
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return memes.count
+        
+        var numOfRows: Int = 0
+        if memes.count > 0 {
+            tableView.separatorStyle = .singleLine
+            numOfRows = memes.count
+            tableView.backgroundView = nil
+        } else {
+            
+            let noDataLabelRect = CGRect(x: 0, y: 0, width: tableView.bounds.size.width, height: tableView.bounds.size.height)
+            let noDataLabel: UILabel = UILabel(frame: noDataLabelRect)
+            noDataLabel.text = "No sent memes yet"
+            noDataLabel.textColor = UIColor.orange
+            noDataLabel.textAlignment = .center
+            tableView.backgroundView = noDataLabel
+            tableView.separatorStyle = .none
+        }
+        
+        return numOfRows
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -44,6 +75,4 @@ class SentMemesTableViewController: UITableViewController {
         
         return cell
     }
-    
-    // MARK: - UITableViewDelegate
 }

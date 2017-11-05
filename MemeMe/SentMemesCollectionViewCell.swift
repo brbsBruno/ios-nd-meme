@@ -10,6 +10,15 @@ import UIKit
 
 class SentMemesCollectionViewCell: UICollectionViewCell {
     
+    // MARK: Outlets
+    
     @IBOutlet weak var memedImageView: UIImageView!
     
+    // MARK: - Life Cicle
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        memedImageView.image = nil
+    }
 }

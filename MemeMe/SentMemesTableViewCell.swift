@@ -10,9 +10,13 @@ import UIKit
 
 class SentMemesTableViewCell: UITableViewCell {
     
+    // MARK: Outlets
+    
     @IBOutlet weak var memedImageView: UIImageView!
     @IBOutlet weak var memedLabel: UILabel!
 
+    // MARK: - Life Cicle
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         

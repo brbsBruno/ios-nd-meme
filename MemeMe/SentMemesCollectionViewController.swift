@@ -12,24 +12,23 @@ private let reuseIdentifier = "SentMemesCollectionViewCell"
 
 class SentMemesCollectionViewController: UICollectionViewController {
     
+    // MARK: - Properties
+    
     var memes: [Meme] {
         return (UIApplication.shared.delegate as! AppDelegate).memes
     }
     
+    // MARK: Outlets
+    
     @IBOutlet var flowLayout: UICollectionViewFlowLayout!
 
-    // Public methods
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        //generateMemesForTesting()
-        ajdustFlowLayout(viewSize: self.view.bounds.size)
-    }
+    // MARK: - Life Cicle
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = false
         
+        ajdustFlowLayout(viewSize: self.view.bounds.size)
         collectionView?.reloadData()
     }
     
@@ -39,7 +38,7 @@ class SentMemesCollectionViewController: UICollectionViewController {
         ajdustFlowLayout(viewSize: size)
     }
     
-    // Private methods
+    // MARK: - UI
     
     private func ajdustFlowLayout(viewSize: CGSize) {
         let space: CGFloat = 2
@@ -59,39 +58,42 @@ class SentMemesCollectionViewController: UICollectionViewController {
         
         flowLayout.invalidateLayout()
     }
-    
-    private func generateMemesForTesting() {
-        for _ in 1...20 {
-            let size = CGSize(width: 100, height: 100)
-            UIGraphicsBeginImageContextWithOptions(size, false, 0)
-            UIColor.green.setFill()
-            UIRectFill(CGRect(origin: CGPoint.zero, size: size))
-            let image = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-            
-            let meme = Meme(topText: "top", bottomText: "bottom", originalImage: image!, memedImage: image!)
-            (UIApplication.shared.delegate as! AppDelegate).memes.append(meme)
-        }
-    }
 
-    /*
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "showCollectionVIewCellDetail" {
+            if let detailViewController = segue.destination as? MemeDetailViewController,
+                let cell = sender as? SentMemesCollectionViewCell,
+                let indexPath = collectionView?.indexPath(for: cell) {
+                detailViewController.meme = memes[indexPath.item];
+            }
+        }
     }
-    */
-
-    // MARK: UICollectionViewDataSource
+    
+    // MARK: - CollectionView Data
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return memes.count
+        var numOfRows: Int = 0
+        
+        if memes.count > 0 {
+            numOfRows = memes.count
+            collectionView.backgroundView = nil
+        } else {
+            
+            let noDataLabelRect = CGRect(x: 0, y: 0, width: collectionView.bounds.size.width, height: collectionView.bounds.size.height)
+            let noDataLabel: UILabel = UILabel(frame: noDataLabelRect)
+            noDataLabel.text = "No sent memes yet"
+            noDataLabel.textColor = UIColor.orange
+            noDataLabel.textAlignment = .center
+            collectionView.backgroundView = noDataLabel
+        }
+        
+        return numOfRows
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

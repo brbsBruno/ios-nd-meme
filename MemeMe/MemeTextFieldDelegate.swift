@@ -10,9 +10,13 @@ import UIKit
 
 class MemeTextFieldDelegate: NSObject, UITextFieldDelegate {
     
+    // MARK: Properties
+    
     weak var memeView: MemeView?
     
     let defaultText = ["TOP", "BOTTOM"]
+    
+    // MARK: Text Field Behaviours
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         if let memeView = memeView {

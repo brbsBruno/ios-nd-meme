@@ -18,6 +18,14 @@ protocol MemeView: class {
 
 class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, MemeView {
     
+    // MARK: - Properties
+    
+    let memeTextFieldDelegate = MemeTextFieldDelegate()
+    let defaultTopText = "TOP"
+    let defaultBottomText = "BOTTOM"
+    
+    // MARK: Outlets
+    
     @IBOutlet weak var memeView: UIView!
     @IBOutlet weak var topTextField: UITextField!
     @IBOutlet weak var memeImageView: UIImageView!
@@ -27,12 +35,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     @IBOutlet weak var headerToolbar: UIToolbar!
     @IBOutlet weak var footerToolbar: UIToolbar!
     
-    let memeTextFieldDelegate = MemeTextFieldDelegate()
-    
-    let defaultTopText = "TOP"
-    let defaultBottomText = "BOTTOM"
-    
-    // MARK: - UIViewController
+    // MARK: - Life Cicle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,6 +56,8 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         unsubscribeToKeyboardNotifications()
     }
     
+    // MARK: - Setup
+    
     func initializeDefaults() {
         topTextField.text = defaultTopText
         memeImageView.image = nil
@@ -61,22 +66,6 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         customizeAppearance()
         checkSharingAvailability()
         checkCameraAvailability()
-    }
-    
-    func hasDefaultData() -> Bool {
-        if (topTextField.text != defaultTopText) {
-            return false
-        }
-        
-        if (bottomTextField.text != defaultBottomText) {
-            return false
-        }
-        
-        if (memeImageView.image != nil) {
-            return false
-        }
-        
-        return true
     }
     
     func customizeAppearance() {
@@ -102,6 +91,22 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         }
     }
     
+    func hasDefaultData() -> Bool {
+        if (topTextField.text != defaultTopText) {
+            return false
+        }
+        
+        if (bottomTextField.text != defaultBottomText) {
+            return false
+        }
+        
+        if (memeImageView.image != nil) {
+            return false
+        }
+        
+        return true
+    }
+    
     func checkCameraAvailability() {
         cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
     }
@@ -109,6 +114,25 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     func checkSharingAvailability() {
         shareButton.isEnabled = (memeImageView.image == nil) ? false : true
     }
+    
+    func disableControls(_ disableControls:Bool) {
+        let barButtonItens = headerToolbar.items! + footerToolbar.items!
+        
+        if (disableControls) {
+            for barButtonItem in barButtonItens {
+                barButtonItem.isEnabled = false
+            }
+        } else {
+            for barButtonItem in barButtonItens {
+                barButtonItem.isEnabled = true
+            }
+            
+            checkCameraAvailability()
+            checkSharingAvailability()
+        }
+    }
+    
+    // MARK: - Actions
     
     @IBAction func shareMeme(_ sender: Any) {
         let activityViewController = UIActivityViewController(activityItems: [generateMemedImage()],
@@ -155,13 +179,6 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         pickImage(.camera)
     }
     
-    func pickImage(_ sourceType: UIImagePickerControllerSourceType) {
-        let controller = UIImagePickerController()
-        controller.delegate = self
-        controller.sourceType = sourceType
-        present(controller, animated: true, completion: nil)
-    }
-    
     @IBAction func changeFont(_ sender: UIBarButtonItem) {
         let alertController = UIAlertController(title: "Choose a font", message: nil, preferredStyle: .actionSheet)
         let antonFontOption = UIAlertAction(title: "Anton", style: .default) { (UIAlertAction) in
@@ -180,35 +197,6 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         alertController.addAction(cancelOption)
         
         present(alertController, animated: true, completion: nil)
-    }
-    
-    func save() {
-        let memedImage = generateMemedImage()
-        let meme = Meme(topText: topTextField.text!,
-                        bottomText: bottomTextField.text!,
-                        originalImage: memeImageView.image!,
-                        memedImage: memedImage)
-        
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        appDelegate.memes.append(meme)
-    }
-    
-    func generateMemedImage() -> UIImage {
-        navigationController?.navigationBar.isHidden = true
-        headerToolbar.isHidden = true
-        footerToolbar.isHidden = true
-        
-        // Render view to an image
-        UIGraphicsBeginImageContext(self.memeView.frame.size)
-        view.drawHierarchy(in: self.memeView.frame, afterScreenUpdates: true)
-        let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
-        UIGraphicsEndImageContext()
-        
-        navigationController?.navigationBar.isHidden = false
-        headerToolbar.isHidden = false
-        footerToolbar.isHidden = false
-        
-        return memedImage
     }
     
     // MARK: - Keyboard
@@ -246,7 +234,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         return keyboardSize.cgRectValue.height
     }
     
-    // MARK: - UIImagePickerControllerDelegate
+    // MARK: - ImagePicker Control
     
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [String : Any]) {
@@ -266,22 +254,40 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         }
     }
     
-    // MARK: - MemeView
+    // MARK: - Editor Controll
     
-    func disableControls(_ disableControls:Bool) {
-        let barButtonItens = headerToolbar.items! + footerToolbar.items!
+    func pickImage(_ sourceType: UIImagePickerControllerSourceType) {
+        let controller = UIImagePickerController()
+        controller.delegate = self
+        controller.sourceType = sourceType
+        present(controller, animated: true, completion: nil)
+    }
+    
+    func save() {
+        let memedImage = generateMemedImage()
+        let meme = Meme(topText: topTextField.text!,
+                        bottomText: bottomTextField.text!,
+                        originalImage: memeImageView.image!,
+                        memedImage: memedImage)
         
-        if (disableControls) {
-            for barButtonItem in barButtonItens {
-                barButtonItem.isEnabled = false
-            }
-        } else {
-            for barButtonItem in barButtonItens {
-                barButtonItem.isEnabled = true
-            }
-            
-            checkCameraAvailability()
-            checkSharingAvailability()
-        }
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate.memes.append(meme)
+    }
+    
+    func generateMemedImage() -> UIImage {
+        navigationController?.navigationBar.isHidden = true
+        headerToolbar.isHidden = true
+        footerToolbar.isHidden = true
+        
+        UIGraphicsBeginImageContext(self.memeView.bounds.size)
+        self.memeView.drawHierarchy(in: self.memeView.bounds, afterScreenUpdates: false)
+        let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        
+        navigationController?.navigationBar.isHidden = false
+        headerToolbar.isHidden = false
+        footerToolbar.isHidden = false
+        
+        return memedImage
     }
 }
