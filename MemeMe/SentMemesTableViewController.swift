@@ -8,10 +8,11 @@
 
 import UIKit
 
+private let reuseIdentifier = "SentMemesTableViewCell"
+
 class SentMemesTableViewController: UITableViewController {
     
     var memes: [Meme]!
-    let cellIdentifier = "SentMemesTableViewCell"
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,7 +34,7 @@ class SentMemesTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let meme = memes[indexPath.row]
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! SentMemesTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! SentMemesTableViewCell
         cell.memedImageView.image = meme.memedImage
         cell.memedLabel.text = meme.topText + " " + meme.bottomText
         
